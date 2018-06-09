@@ -1,0 +1,6 @@
+Generates figures for various categories (problem, assumption, error), and
+stores then in the directory output_figures/
+
+TODO:
+* include exact version numbers and requirements
+* Remove unused code (e.g PIL ?)
