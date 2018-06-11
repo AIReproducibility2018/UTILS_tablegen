@@ -13,6 +13,13 @@ def main():
 
     for name in names:
         df = load_rows(name)
+        if name == 'papers.csv':
+            # Move the year column right after article
+            cols = df.columns.tolist()
+            cols.remove('Year')
+            idx = cols.index('Article')
+            cols.insert(idx+1, 'Year')
+            df = df[cols]
 
         tex = df.to_latex(index=False, column_format='X'*len(df.columns))
         tex = tex.replace("\\begin{tabular}", "\\begin{tabularx}{\\textwidth}")
