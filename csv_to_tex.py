@@ -21,7 +21,11 @@ def main():
             cols.insert(idx+1, 'Year')
             df = df[cols]
 
-        tex = df.to_latex(index=False, column_format='X'*len(df.columns))
+        coltitles_to_wrap = ['Article', 'Problem Category', 'Error Category', 'Assumption Category']
+        wrap_these = lambda x: x.lower() in [y.lower() for y in coltitles_to_wrap]
+        latex_col_formats = ['X' if wrap_these(col) else 'c' for col in df.columns]
+
+        tex = df.to_latex(index=False, column_format=''.join(latex_col_formats))
         tex = tex.replace("\\begin{tabular}", "\\begin{tabularx}{\\textwidth}")
         tex = tex.replace("\\end{tabular}", "\\end{tabularx}")
         filename = "{}.tex".format(name)
