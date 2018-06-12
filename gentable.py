@@ -113,14 +113,6 @@ def save_horizontal_bar_chart(frame, path, xlabel, ylabel, **kwargs):
     plt.clf()
     return fig
 
-def blend(path1, path2, output_path):
-    img1 = np.asarray(Image.open(path1))
-    img2 = np.asarray(Image.open(path2))
-
-    blended = (img1*0.5 + img2*0.5).astype(np.uint8)
-    img = Image.fromarray(blended)
-    img.save(output_path)
-
 def main(output_directory):
     plt.style.use('seaborn-white')
     custom_cmap = matplotlib.colors.ListedColormap(["blue", "green", "red"], name='from_list', N=None)
@@ -202,19 +194,6 @@ def main(output_directory):
         # highest count
         max1,max2 = weighted_R1.values.max(), weighted_R2.values.max()
         center = max(max1, max2)*0.5
-
-        # temporary file, blended with PIL (Pillow) later
-        path1 = os.path.join(output_directory, "tmp_R1.png")
-        fig1 = savefig(weighted_R1, path1, square=True, annot=False, cmap="Blues", center=center)
-
-        # temporary file, blended with PIL (Pillow) later
-        path2 = os.path.join(output_directory, "tmp_R2.png")
-        fig2 = savefig(weighted_R2, path2, square=True, annot=False, cmap="Reds",  center=center)
-
-        # perform a very cheap blend by creating a new image using half of each
-        filename = "{}_{}.png".format("blended", overall_category)
-        output_path = os.path.join(output_directory, filename)
-        blend(path1, path2, output_path)
 
     # plot problems, assumptions, and errors per paper
     #   bar plot
