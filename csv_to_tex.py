@@ -5,6 +5,19 @@ from pandas.plotting import table
 import matplotlib.pyplot as plt
 import numpy as np
 
+def df_to_tex(df, coltitles_to_wrap, savepath, escape=True):
+    wrap_these = lambda x: x.lower() in [y.lower() for y in coltitles_to_wrap]
+    latex_col_formats = ['X' if wrap_these(col) else 'l' for col in df.columns]
+
+    tex = df.to_latex(index=False, column_format=''.join(latex_col_formats), escape=escape)
+    tex = tex.replace("\\begin{tabular}", "\\begin{tabularx}{\\textwidth}")
+    tex = tex.replace("\\end{tabular}", "\\end{tabularx}")
+
+    #print(tex)
+    with open(savepath, 'w') as f:
+        print("Writing to {}".format(savepath))
+        f.write(tex)
+
 
 # This code is awful.
 def main():
@@ -22,17 +35,26 @@ def main():
             df = df[cols]
 
         coltitles_to_wrap = ['Article', 'Problem Category', 'Error Category', 'Assumption Category']
-        wrap_these = lambda x: x.lower() in [y.lower() for y in coltitles_to_wrap]
-        latex_col_formats = ['X' if wrap_these(col) else 'l' for col in df.columns]
 
-        tex = df.to_latex(index=False, column_format=''.join(latex_col_formats))
-        tex = tex.replace("\\begin{tabular}", "\\begin{tabularx}{\\textwidth}")
-        tex = tex.replace("\\end{tabular}", "\\end{tabularx}")
         filename = "{}.tex".format(name)
-        path = os.path.join("output_figures", filename)
-        print(tex)
-        with open(path, 'w') as f:
-            f.write(tex)
+        savepath = os.path.join("output_figures", filename)
+        df_to_tex(df, coltitles_to_wrap, savepath)
+
+
+    all_papers_dir = 'all_papers_used'
+    for csv in os.listdir(all_papers_dir):
+        if csv[-4:] != '.csv':
+            continue
+
+        inpath = os.path.join(all_papers_dir, csv)
+        df = load_rows(inpath)
+        df['Citation'] = df['Citation'].map(lambda x: "{%s}" % x)
+
+        coltitles_to_wrap = ['Title']
+        new_filename = "{}.tex".format(csv)
+        savepath = os.path.join("all_papers_used", new_filename)
+        df_to_tex(df, coltitles_to_wrap, savepath, escape=False)
+
 
 if __name__ == '__main__':
     main()
