@@ -1,0 +1,11 @@
+Title,Cited by,Level,Researcher,Citation
+Mastering the game of Go with deep neural networks and tree search,571,R3,MM,\cite{silver2016mastering}
+"Deep Convolutional Neural Networks for Computer-Aided Detection: CNN Architectures, Dataset Characteristics and Transfer Learning",152,R3,OC,\cite{shin2016deep}
+MLlib: Machine learning in Apache Spark,98,R3,OC,\cite{meng2016mllib}
+XGBoost: A scalable tree boosting system,97,R1,MM,\cite{chen2016xgboost}
+Deep neural networks: A promising tool for fault characteristic mining and intelligent diagnosis of rotating machinery with massive data,77,R2-D,NN,\cite{jia2016deep}
+ISuc-PseOpt: Identifying lysine succinylation sites in proteins by incorporating sequence-coupling effects into pseudo components and optimizing imbalanced training dataset,71,R2-D,OC,\cite{jia2016isucpseopt}
+Classification with Noisy Labels by Importance Reweighting,69,R2-D,OC,\cite{liu2016classification}
+Deep convolutional and LSTM recurrent neural networks for multimodal wearable activity recognition,52,R1,OC,\cite{ordonez2016deep}
+Generalized Correntropy for Robust newline ?Adaptive Filtering,49,R2-D,MM,\cite{chen2016generalized}
+Learning Rotation-Invariant Convolutional Neural Networks for Object Detection in VHR Optical Remote Sensing Images,45,R3,MM,\cite{cheng2016learning}

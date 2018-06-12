@@ -1,0 +1,11 @@
+Title,Cited by,Level,Researcher,Citation
+Visualizing and understanding convolutional networks,767,R2-D,OC,\cite{zeiler2014visualizing}
+Clustering by fast search and find of density peaks,545,R1,MM,\cite{rodriguez2014clustering}
+Distributed representations of sentences and documents,266,R2-D,MM,\cite{le2014distributed}
+DeCAF: A deep convolutional activation feature for generic visual recognition,257,R2-D,MM,\cite{donahue2014decaf}
+DeepReID: Deep filter pairing neural network for person re-identification,178,R2-D,NN,\cite{li2014deepreid}
+Robust text detection in natural scene images,177,R3,NN,\cite{yin2014robust}
+Deep learning-based classification of hyperspectral data,171,R1,NN,\cite{chen2014deep}
+Semi-supervised and unsupervised extreme learning machines,158,R2-D,NN,\cite{huang2014semi}
+Towards end-to-end speech recognition with recurrent neural networks,140,R3,MM,\cite{graves2014towards}
+Facial landmark detection by deep multi-task learning,132,R2-D,NN,\cite{zhang2014facial}
