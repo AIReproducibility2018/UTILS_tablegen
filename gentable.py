@@ -1,5 +1,3 @@
-from PIL import Image
-
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -93,11 +91,67 @@ def save_heatmap_vertical(heatmap, path, ylabel, **kwargs):
     plt.clf()
     return fig
 
+def add_bar_labels(ax, vertical=True, bar_label_fontsize=8):
+    """Adds a value at the top of the bar showing the size of it"""
+    handles, labels = ax.get_legend_handles_labels()
+
+    # In order to support stacked bar charts by only add a value for the
+    # highest point (as stacked rectangles are counted individually),
+    # store each bars identifier along with the size of the bar, and
+    # keep the max size.
+    max_values = {}
+    neginf = -float('inf') # Placeholder for the first occurence of each key
+                           # that is always replaced
+    for i in ax.patches:
+        if vertical:
+            x = i.xy[0]
+            y = i.xy[1] + i.get_height()
+            max_values[x] = max(max_values.get(x, neginf), y)
+        else: # Do the same except for horizontal bar charts.
+            x = i.xy[0] + i.get_width()
+            y = i.xy[1]
+            max_values[y] = max(max_values.get(y, neginf), x)
+
+    # Perform a second pass, this time fetching the sizes
+    for i in ax.patches:
+        # Only add a label once per set of (stacked) bars
+        used = set()
+        if vertical:
+            x = i.xy[0]
+            if x in used:
+                continue
+            used.add(x)
+            y = max_values[x]
+            # Avoid floating point checks on equality (e.g as keys), even if
+            # it might be fine. Hence, do the offset to center the label here
+            # after it has been used as a key.
+            x += i.get_width()*0.5
+            ha,va = 'center','bottom'
+            size=y
+        else: # Do the same except for horizontal bar charts.
+            y = i.xy[1]
+            if y in used:
+                continue
+            used.add(y)
+            x = max_values[y]
+            y += i.get_height()*0.5
+            ha,va = 'left','center'
+            size=x
+
+        ax.text(x=x,
+                y=y,
+                s="{}".format(int(size)),
+                fontsize=bar_label_fontsize,
+                ha=ha,
+                va=va)
+
 def save_stacked_bar_chart(frame, path, xlabel, ylabel, **kwargs):
     frame = frame.T
     fig = frame.plot.bar(stacked=True, **kwargs)
     fig.set_xlabel(xlabel, labelpad=4)
     fig.set_ylabel(ylabel, labelpad=5)
+    add_bar_labels(ax=fig, vertical=True)
+
     fig.get_figure().savefig(path)
     plt.clf()
     return fig
@@ -109,17 +163,11 @@ def save_horizontal_bar_chart(frame, path, xlabel, ylabel, **kwargs):
     fig.set_xlabel(xlabel)
     fig.set_ylabel(ylabel)
     fig.xaxis.set_label_position('top')
+    add_bar_labels(ax=fig, vertical=False)
+
     fig.get_figure().savefig(path)
     plt.clf()
     return fig
-
-def blend(path1, path2, output_path):
-    img1 = np.asarray(Image.open(path1))
-    img2 = np.asarray(Image.open(path2))
-
-    blended = (img1*0.5 + img2*0.5).astype(np.uint8)
-    img = Image.fromarray(blended)
-    img.save(output_path)
 
 def main(output_directory):
     plt.style.use('seaborn-white')
@@ -147,21 +195,8 @@ def main(output_directory):
     for key in maps:
         heatmap = maps[key][0]
         maps[key].extend(split_into_R1_R2(heatmap))
-
     # [assumption, problem, error]
     for overall_category in maps:
-        # 2D version, i.e only 0 or 1 and each paper has its own row
-        # [both, R1, R2]
-        for division,divtag in zip(maps[overall_category], ["both", "R1", "R2"]):
-            # skip the first three columns with paper title etc
-            heatmap = division.iloc[:,3:]
-            filename = "{}_{}_{}".format(
-                "2D",
-                overall_category,
-                divtag)
-            path = os.path.join(output_directory, filename)
-            savefig(heatmap, path, annot=True)
-
         # 1D version, i.e only one row where each column is the number of
         # occurences for that X category across the papers
         # [both, R1, R2]
@@ -190,7 +225,6 @@ def main(output_directory):
             path = os.path.join(output_directory, filename)
             save_stacked_bar_chart(division, path, overall_category.capitalize() + " Category", "Count")
 
-
         # 1D version, R1 and R2 normalized to number of papers
         # [R1, R2]
         R1 = pd.DataFrame(maps[overall_category][1].iloc[:,3:])
@@ -202,19 +236,6 @@ def main(output_directory):
         # highest count
         max1,max2 = weighted_R1.values.max(), weighted_R2.values.max()
         center = max(max1, max2)*0.5
-
-        # temporary file, blended with PIL (Pillow) later
-        path1 = os.path.join(output_directory, "tmp_R1.png")
-        fig1 = savefig(weighted_R1, path1, square=True, annot=False, cmap="Blues", center=center)
-
-        # temporary file, blended with PIL (Pillow) later
-        path2 = os.path.join(output_directory, "tmp_R2.png")
-        fig2 = savefig(weighted_R2, path2, square=True, annot=False, cmap="Reds",  center=center)
-
-        # perform a very cheap blend by creating a new image using half of each
-        filename = "{}_{}.png".format("blended", overall_category)
-        output_path = os.path.join(output_directory, filename)
-        blend(path1, path2, output_path)
 
     # plot problems, assumptions, and errors per paper
     #   bar plot
