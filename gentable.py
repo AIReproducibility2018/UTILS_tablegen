@@ -158,15 +158,15 @@ def save_stacked_bar_chart(frame, path, xlabel, ylabel, **kwargs):
     plt.clf()
     return fig
 
-def save_horizontal_bar_chart(frame, path, xlabel, ylabel, **kwargs):
+def save_horizontal_bar_chart(frame, path, xlabel, ylabel, drop_zero=False, **kwargs):
     fig = frame.plot.barh(**kwargs)
     fig.invert_yaxis()
     fig.xaxis.tick_top()
     fig.set_xlabel(xlabel)
     fig.set_ylabel(ylabel)
     fig.xaxis.set_label_position('top')
-    add_bar_labels(ax=fig, vertical=False)
-
+    fig.xaxis.set_major_locator(MaxNLocator(integer=True))
+    add_bar_labels(ax=fig, vertical=False, bar_label_fontsize=7, x_padding=0.1, drop_zero=drop_zero)
     fig.get_figure().savefig(path, bbox_inches='tight')
     plt.clf()
     return fig
@@ -250,12 +250,12 @@ def main(output_directory):
         frame.columns = [overall_category.capitalize()]
         category_maps.append(frame)
     frames = pd.concat(category_maps, axis=1)
+    frames['All'] = frames.sum(axis=1)
     filename = "papers_bar.svg"
     output_path = os.path.join(output_directory, filename)
-    save_horizontal_bar_chart(frames, output_path, "Count", "Article", width=0.5, figsize=(6,12))
+    save_horizontal_bar_chart(frames, output_path, "Count", "Article", drop_zero=True, width=0.7, figsize=(6,12))
 
     #   plot heatmap
-    frames['All'] = frames.sum(axis=1)
     filename = "papers_heatmap.svg"
     output_path = os.path.join(output_directory, filename)
     for column in frames:
@@ -279,12 +279,13 @@ def main(output_directory):
         category_maps.append(frame)
     frames = pd.concat(category_maps, axis=1)
     del frames['ID']
+    frames['All'] = frames.sum(axis=1)
     filename = "papers_type_bar.svg"
     output_path = os.path.join(output_directory, filename)
     save_horizontal_bar_chart(frames, output_path, "Count", "Article", width=0.5, figsize=(6, 12))
 
 
-    # generate box plot
+    # generate box plot for outcomes
     frames = []
     for outcome_category in outcome_maps:
         frame = pd.DataFrame(outcome_maps[outcome_category][0])
@@ -306,23 +307,48 @@ def main(output_directory):
                    "Partial success - Problem", "Partial success - Assumption", "Partial success - Error", "Partial success - All",
                    "Failure - Problem", "Failure - Assumption", "Failure - Error", "Failure - All",
                    "No Result - Problem", "No Result - Assumption", "No Result - Error", "No Result - All"]
-    palette = {}
-    for i in range(0, len(new_columns), 4):
-        palette[new_columns[i]] = colors[0]
-        palette[new_columns[i + 1]] = colors[1]
-        palette[new_columns[i + 2]] = colors[2]
-        palette[new_columns[i + 3]] = colors[3]
     frames['Overall outcome'] = pd.Categorical(frames['Overall outcome'], new_columns)
     sorted = frames.sort_values(['Overall outcome'])
     ax = sns.boxplot(y="Overall outcome", x="Count", data=sorted, palette=colors)
     ax.xaxis.tick_top()
     ax.xaxis.set_label_position('top')
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-    output_path = os.path.join(output_directory, "boxplot.svg")
+    output_path = os.path.join(output_directory, "boxplot_outcome.svg")
     ax.get_figure().savefig(output_path, bbox_inches='tight')
     # clear figure
     plt.clf()
 
+    # generate box plot for types
+    frames = []
+    for overall_category in maps:
+        frame = pd.DataFrame(maps[overall_category][0])
+        id_column = frame["ID"]
+        type_column = frame["R1/R2"].apply(lambda row: row + " - " + overall_category.capitalize())
+        frame = pd.DataFrame(frame.iloc[:, 3:].sum(axis=1))
+        frame = pd.concat([id_column, type_column, frame], axis=1)
+        frames.append(frame)
+    frames = pd.concat(frames)
+    frames = frames.rename(index=int, columns={0: "Count"})
+    combined = frames.groupby('ID')['Count'].sum(axis=0)
+    for i in range(1, len(combined) + 1):
+        overall_outcome = frames.loc[frames['ID'] == i].iloc[0, 1]
+        outcome_name = overall_outcome.split("-")[0]
+        frames.loc[-1] = [i, outcome_name + "- All", combined[i]]
+        frames.index = frames.index + 1
+    frames.set_index('ID')
+    new_columns = ["R1 - Problem", "R1 - Assumption", "R1 - Error", "R1 - All",
+                   "R2 - Problem", "R2 - Assumption", "R2 - Error", "R2 - All"]
+    frames["Reproduction type"] = pd.Categorical(frames["R1/R2"], new_columns)
+    del frames["R1/R2"]
+    sorted = frames.sort_values(["Reproduction type"])
+    ax = sns.boxplot(y="Reproduction type", x="Count", data=sorted, palette=colors)
+    ax.xaxis.tick_top()
+    ax.xaxis.set_label_position('top')
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    output_path = os.path.join(output_directory, "boxplot_type.svg")
+    ax.get_figure().savefig(output_path, bbox_inches='tight')
+    # clear figure
+    plt.clf()
 
     # plot problems, assumptions, and errors per paper, grouped by outcome
     #   bar plot
@@ -371,7 +397,7 @@ def main(output_directory):
     frames['All'] = frames.sum(axis=1)
     filename = "papers_outcome_bar.svg"
     output_path = os.path.join(output_directory, filename)
-    fig = frames.plot.barh(figsize=(10, 14), width=0.8, colormap=custom_cmap)
+    fig = frames.plot.barh(figsize=(8, 14), width=0.8, colormap=custom_cmap)
     fig.invert_yaxis()
     fig.set_yticklabels(yticks)
     fig.xaxis.tick_top()
