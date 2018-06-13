@@ -86,7 +86,7 @@ def save_heatmap_vertical(heatmap, path, ylabel, **kwargs):
     fig = sns.heatmap(heatmap, cmap=sns.cm.rocket_r, **kwargs)
     fig.xaxis.tick_top()
     fig.set_ylabel(ylabel)
-    fig.get_figure().savefig(path)
+    fig.get_figure().savefig(path, bbox_inches='tight')
     # clear figure
     plt.clf()
     return fig
@@ -152,7 +152,7 @@ def save_stacked_bar_chart(frame, path, xlabel, ylabel, **kwargs):
     fig.set_ylabel(ylabel, labelpad=5)
     add_bar_labels(ax=fig, vertical=True)
 
-    fig.get_figure().savefig(path)
+    fig.get_figure().savefig(path, bbox_inches='tight')
     plt.clf()
     return fig
 
@@ -165,7 +165,7 @@ def save_horizontal_bar_chart(frame, path, xlabel, ylabel, **kwargs):
     fig.xaxis.set_label_position('top')
     add_bar_labels(ax=fig, vertical=False)
 
-    fig.get_figure().savefig(path)
+    fig.get_figure().savefig(path, bbox_inches='tight')
     plt.clf()
     return fig
 
@@ -251,6 +251,7 @@ def main(output_directory):
     save_horizontal_bar_chart(frames, output_path, "Count", "Article", width=0.5, figsize=(6,12))
 
     #   plot heatmap
+    frames['All'] = frames.sum(axis=1)
     filename = "papers_heatmap.png"
     output_path = os.path.join(output_directory, filename)
     for column in frames:
@@ -289,12 +290,19 @@ def main(output_directory):
         frames.append(frame)
     frames = pd.concat(frames)
     frames = frames.rename(index=str, columns={0:"Count"})
-    frames['Overall outcome'] = pd.Categorical(frames['Overall outcome'], ["Success - Problem", "Success - Assumption", "Success - Error",
-                                                                         "Partial success - Problem", "Partial success - Assumption", "Partial success - Error",
-                                                                         "Failure - Problem", "Failure - Assumption", "Failure - Error",
-                                                                         "No Result - Problem", "No Result - Assumption", "No Result - Error"])
+    new_columns = ["Success - Problem", "Success - Assumption", "Success - Error",
+                   "Partial success - Problem", "Partial success - Assumption", "Partial success - Error",
+                   "Failure - Problem", "Failure - Assumption", "Failure - Error",
+                   "No Result - Problem", "No Result - Assumption", "No Result - Error"]
+    colors = ['blue', 'orange', 'green']
+    palette = {}
+    for i in range(0, len(new_columns), 3):
+        palette[new_columns[i]] = colors[0]
+        palette[new_columns[i + 1]] = colors[1]
+        palette[new_columns[i + 2]] = colors[2]
+    frames['Overall outcome'] = pd.Categorical(frames['Overall outcome'], new_columns)
     sorted = frames.sort_values(['Overall outcome'])
-    ax = sns.boxplot(y="Overall outcome", x="Count", data=sorted)
+    ax = sns.boxplot(y="Overall outcome", x="Count", data=sorted, palette=palette)
     output_path = os.path.join(output_directory, "boxplot.png")
     ax.get_figure().savefig(output_path, bbox_inches='tight')
     # clear figure
@@ -354,7 +362,7 @@ def main(output_directory):
     # hardcoded label to fit figure size
     fig.set_ylabel("              No Result                                          Failure                                                Partial Success                      Success")
     fig.xaxis.set_label_position('top')
-    fig.get_figure().savefig(output_path)
+    fig.get_figure().savefig(output_path, bbox_inches='tight')
     plt.clf()
 
 if __name__ == '__main__':

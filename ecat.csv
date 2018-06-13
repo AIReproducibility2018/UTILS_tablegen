@@ -10,7 +10,7 @@ E8,The trained weights or trained parameters shared are not the same as was used
 E9,The parameters are not the same as was used in the original experiment,"1, 4, 6, 15, 18, 17"
 E10,"The randomness in the method or experiment, and the lack of shared random numbers and random number generator, influences the result","8, 11, 9"
 E11,Augmented and pre-processed data set used in reproduction is not equivalent to the data set used in original experiment,"8, 11, 17"
-E12,The data subset used in reproduction is not the same as was used in original experiment,"11, 13"
+E12,The data subset used in reproduction is not the same as was used in original experiment,"6, 13"
 E13,"The partitioning of data into training, validation, and test set is not the same as was used in the original experiment",11
 E14,Differences in hardware influenced the result,12
 E15,The reproduced results are difficult to compare to the original results,10
