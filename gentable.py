@@ -3,6 +3,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 
 import math
 import re
@@ -91,7 +92,7 @@ def save_heatmap_vertical(heatmap, path, ylabel, **kwargs):
     plt.clf()
     return fig
 
-def add_bar_labels(ax, vertical=True, bar_label_fontsize=8):
+def add_bar_labels(ax, vertical=True, bar_label_fontsize=8, drop_zero=False, x_padding=0, y_padding=0):
     """Adds a value at the top of the bar showing the size of it"""
     handles, labels = ax.get_legend_handles_labels()
 
@@ -138,12 +139,13 @@ def add_bar_labels(ax, vertical=True, bar_label_fontsize=8):
             ha,va = 'left','center'
             size=x
 
-        ax.text(x=x,
-                y=y,
-                s="{}".format(int(size)),
-                fontsize=bar_label_fontsize,
-                ha=ha,
-                va=va)
+        if (not drop_zero) or size > 0:
+            ax.text(x=x+x_padding,
+                    y=y+y_padding,
+                    s="{}".format(int(size)),
+                    fontsize=bar_label_fontsize,
+                    ha=ha,
+                    va=va)
 
 def save_stacked_bar_chart(frame, path, xlabel, ylabel, **kwargs):
     frame = frame.T
@@ -171,7 +173,9 @@ def save_horizontal_bar_chart(frame, path, xlabel, ylabel, **kwargs):
 
 def main(output_directory):
     plt.style.use('seaborn-white')
-    custom_cmap = matplotlib.colors.ListedColormap(["blue", "green", "red"], name='from_list', N=None)
+    colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']
+    custom_cmap = matplotlib.colors.ListedColormap(sns.color_palette(colors).as_hex())
+    #custom_cmap = matplotlib.colors.ListedColormap(['tab:blue', 'tab:orange', 'tab:green', 'tab:red'], name='from_list', N=None)
     #{ ass:[full_map, R1_map, R2_map],
     #  prob:[...],
     #  ...}
@@ -209,7 +213,7 @@ def main(output_directory):
                 "1D",
                 overall_category,
                 divtag)
-            path = os.path.join(output_directory, filename)
+            path = os.path.join(output_directory, filename) + '.svg'
             savefig(heatmap , path, square=True, annot=True)
 
         # generate bar charts
@@ -222,7 +226,7 @@ def main(output_directory):
             filename = "{}_{}_bar".format(
                 overall_category,
                 divtag)
-            path = os.path.join(output_directory, filename)
+            path = os.path.join(output_directory, filename) + '.svg'
             save_stacked_bar_chart(division, path, overall_category.capitalize() + " Category", "Count")
 
         # 1D version, R1 and R2 normalized to number of papers
@@ -246,13 +250,13 @@ def main(output_directory):
         frame.columns = [overall_category.capitalize()]
         category_maps.append(frame)
     frames = pd.concat(category_maps, axis=1)
-    filename = "papers_bar.png"
+    filename = "papers_bar.svg"
     output_path = os.path.join(output_directory, filename)
     save_horizontal_bar_chart(frames, output_path, "Count", "Article", width=0.5, figsize=(6,12))
 
     #   plot heatmap
     frames['All'] = frames.sum(axis=1)
-    filename = "papers_heatmap.png"
+    filename = "papers_heatmap.svg"
     output_path = os.path.join(output_directory, filename)
     for column in frames:
         max_value = frames[column].max()
@@ -275,7 +279,7 @@ def main(output_directory):
         category_maps.append(frame)
     frames = pd.concat(category_maps, axis=1)
     del frames['ID']
-    filename = "papers_type_bar.png"
+    filename = "papers_type_bar.svg"
     output_path = os.path.join(output_directory, filename)
     save_horizontal_bar_chart(frames, output_path, "Count", "Article", width=0.5, figsize=(6, 12))
 
@@ -284,26 +288,37 @@ def main(output_directory):
     frames = []
     for outcome_category in outcome_maps:
         frame = pd.DataFrame(outcome_maps[outcome_category][0])
+        id_column = frame["ID"]
         outcome_column = frame["Overall outcome"].apply(lambda row: row + " - " + outcome_category.capitalize())
         frame = pd.DataFrame(frame.iloc[:, 3:].sum(axis=1))
-        frame = pd.concat([outcome_column, frame], axis=1)
+        frame = pd.concat([id_column, outcome_column, frame], axis=1)
         frames.append(frame)
     frames = pd.concat(frames)
-    frames = frames.rename(index=str, columns={0:"Count"})
-    new_columns = ["Success - Problem", "Success - Assumption", "Success - Error",
-                   "Partial success - Problem", "Partial success - Assumption", "Partial success - Error",
-                   "Failure - Problem", "Failure - Assumption", "Failure - Error",
-                   "No Result - Problem", "No Result - Assumption", "No Result - Error"]
-    colors = ['blue', 'orange', 'green']
+    frames = frames.rename(index=int, columns={0:"Count"})
+    combined = frames.groupby('ID')['Count'].sum(axis=0)
+    for i in range(1, len(combined)+1):
+        overall_outcome = frames.loc[frames['ID'] == i].iloc[0,1]
+        outcome_name = overall_outcome.split("-")[0]
+        frames.loc[-1] = [i, outcome_name + "- All", combined[i]]
+        frames.index = frames.index + 1
+    frames.set_index('ID')
+    new_columns = ["Success - Problem", "Success - Assumption", "Success - Error", "Success - All",
+                   "Partial success - Problem", "Partial success - Assumption", "Partial success - Error", "Partial success - All",
+                   "Failure - Problem", "Failure - Assumption", "Failure - Error", "Failure - All",
+                   "No Result - Problem", "No Result - Assumption", "No Result - Error", "No Result - All"]
     palette = {}
-    for i in range(0, len(new_columns), 3):
+    for i in range(0, len(new_columns), 4):
         palette[new_columns[i]] = colors[0]
         palette[new_columns[i + 1]] = colors[1]
         palette[new_columns[i + 2]] = colors[2]
+        palette[new_columns[i + 3]] = colors[3]
     frames['Overall outcome'] = pd.Categorical(frames['Overall outcome'], new_columns)
     sorted = frames.sort_values(['Overall outcome'])
-    ax = sns.boxplot(y="Overall outcome", x="Count", data=sorted, palette=palette)
-    output_path = os.path.join(output_directory, "boxplot.png")
+    ax = sns.boxplot(y="Overall outcome", x="Count", data=sorted, palette=colors)
+    ax.xaxis.tick_top()
+    ax.xaxis.set_label_position('top')
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    output_path = os.path.join(output_directory, "boxplot.svg")
     ax.get_figure().savefig(output_path, bbox_inches='tight')
     # clear figure
     plt.clf()
@@ -352,16 +367,21 @@ def main(output_directory):
             yticks.append("")
         else:
             yticks.append(indices[i])
-    filename = "papers_outcome_bar.png"
+    # add 'All' column
+    frames['All'] = frames.sum(axis=1)
+    filename = "papers_outcome_bar.svg"
     output_path = os.path.join(output_directory, filename)
-    fig = frames.plot.barh(width=0.6, figsize=(6, 10))
+    fig = frames.plot.barh(figsize=(10, 14), width=0.8, colormap=custom_cmap)
     fig.invert_yaxis()
     fig.set_yticklabels(yticks)
     fig.xaxis.tick_top()
     fig.set_xlabel("Count")
     # hardcoded label to fit figure size
-    fig.set_ylabel("              No Result                                          Failure                                                Partial Success                      Success")
+    ylabel = " "*22 + "No Result" + " "*60 + "Failure" + " "*72 + "Partial Success" + " "*40 + "Success"
+    fig.set_ylabel(ylabel)
     fig.xaxis.set_label_position('top')
+    fig.xaxis.set_major_locator(MaxNLocator(integer=True))
+    add_bar_labels(ax=fig, bar_label_fontsize=6, vertical=False, drop_zero=True, x_padding=0.1)
     fig.get_figure().savefig(output_path, bbox_inches='tight')
     plt.clf()
 
