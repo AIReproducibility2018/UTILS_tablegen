@@ -1,5 +1,4 @@
 seaborn-0.8.1
-matplotlib
-pandas
-numpy
-PIL
+matplotlib-2.2.2
+pandas-0.23.0
+numpy-1.13.3
