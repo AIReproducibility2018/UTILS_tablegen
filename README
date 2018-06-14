@@ -1,3 +1,12 @@
+Note: The release version of this repository that was referenced from the
+thesis of NN did not include the raw list of problems, assumptions, etc
+that were encountered for each specific paper covered. The version of this
+list as it was on 2018.06.14 is included in commit 89c4fe44b45fc8983cf5de527fd7305f6186260b ,
+which was commited two days after the original release version.
+
+A release version v1.1 has been made to make this more visible.
+
+
 Generates figures for various categories (problem, assumption, error), and
 stores then in the directory output_figures/
 
