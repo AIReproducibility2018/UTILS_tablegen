@@ -1,0 +1,308 @@
+ID,Article,R1/R2,How many experiments were covered? ,What problems were encountered during the reproduction?,What assumptions did you make?,"What hardware was the reproduction attempts performed with (CPU, RAM, GPU if relevant)? Which operating system? Which third-party libraries were used?",Summary of results,Evaluation of results,What are the most probable causes of the reproduction error?,Was the reproduction a success?,How many hours were used in the reproduction attempt?
+1,Measuring the Objectness of Image Windows,R1,"- One of four experiments was attempted
+- The attempted experiment was the only one with clear quantitative results","- Experiment code was not shared (1)
+- Method code was available and versioned, but we could not determine which version was used in the original experiment (6)
+- The random number generator used, and its seed, is not specified (8)
+","- The available method code is the same as, or equivalent with, the code used in the original experiment
+- The default parameters provided together with the method code are the ones learned in the original experiment","- CPU: Intel i7-4720HQ
+- RAM: 8 GB
+- OS: Windows 10 Home, version 10.0.16299
+- Language: Matlab 9.3.0.713579 (R2017b)
+",Measuring the objectness of image windows,"- The results achieved in the reproduction are close to the original values, but differ with 1-2 percentage points in most cases
+- In most cases the reproduced results are worse than the original results, which seems to indicate some systematic error in the reproduction
+- The reproduction is consistent with the otiginal results, since both the original and reproduced results outcompete the comparative algorithm, OD","- The experiment code of the reproduction attempt does not correctly implement the original experiment
+- The parameters provided with the method code are not the ones which were used in the original experiment. The provided parameters might have been learnt from a different dataset, aimed at mote generality
+- The random numbers used in the reproduction and original experiment are not the same. This is almost certainly true, but unlikely to be the cause of the error since the reproduction is systematically worse",No?,40
+2,Generalized Correntropy for Robust Adaptive Filtering,R2,"- Two of four experiments were conducted
+- Did not have time for the other ones","- The math was challenging so it was difficult to understand how it worked and how to implement (10)
+- Was unsure what was the algorithm and what was supporting material (11)
+- Difficult to know if simulations were correctly implemented, especially the first one (POD) (10)
+- Results were shown in graph form (19)","- The input to the algorithm was simply the original weights with the input signal and noise signal added
+- By binary distribution they meant Bernoulli distribution","- CPU: Intel 5Y10
+- RAM: 8GB
+- OS: Windows 10 Home, Version: 17134.48
+- Language: Python 3.6
+- Libraries: numpy, enum, math, matplotlib.pyplot, json, jsonlines",Generalized Correntropy for Robust Adaptive Filtering,"- The first simulation achieved the same results (difficult to know whether the simulation were correctly implemented
+- The convergence for the last simulation were a lot slower (closer to 8000 iteration than 2000)
+- The difference between the results of the different hyper-parameters were not consistent with the article","- Wrong implementation of the algorithm
+- Wrong implementation of the simulations",No,40
+3,Development and investigation of efficient artificial bee colony algorithm for numerical function optimization,R2,- 23 out of 23 functions were run with two methods,"- The selection (roulette) of solutions used for onlooker bees (11)
+- Were not able to achieve the intended results for the original ABC algorithm that the two others were based on
+
+",- The roulette selection is run for each onlooker bee,"- CPU: Intel i5-4670
+- RAM: 8 GB
+- OS: Windows 10 Pro, version 1709
+- Language: Java 1.8 ",Development and investigation of efficient artificial bee colony algorithm for numerical function optimization,"- The results were in some cases better, in some cases the same and is some cases worse","- The original ABC algorithm implemented based on the article did not recieve the same results. This makes it seem like there are something wrong with the implementation
+- Wrong selection of possible food sources for the onlookers
+- Test functions incorrectly implemented",No,40
+4,Blind Image Quality Assessment: A Natural Scene Statistics Approach in the DCT Domain,R1,"- One of three experiments was reproduced
+- The attempted experiment was the only one which was R1 reproducible given the available code","- The experiment code was not available (1)
+- The method code was only partially available. The training component of the method was not shared, and limited which experiments were possible to reproduce (2)
+- The method code is poorly documented, with some part commented out without adequate explanation (3)
+- Several sets of learned parameters were provided, but only one of the sets matched a set used in the original experiment (5)
+- Code was not versioned (6)
+- The random number generator, and its seed, is not specified (8)","- The method code available online is the same as was used in the original experiment
+- The parameters included with the method code from training on the LIVE dataset are the same as was used in the original experiment","- CPU: Intel i7-4720HQ
+- RAM: 8 GB
+- OS: Windows 10 Home, version 10.0.16299
+- Language: Matlab 9.3.0.713579 (R2017b)
+",Blind Image Quality Assessment,"- The accuracy achieved in the reproduction is 1-3 percent lower than the original accuracy in all cases. This suggests there is some error in the reproduction causing lower performance
+- The reproduction is consistent since the reproduced and original results achieve the same levels of success compared to the reference algorithms","- The method code used in the reproduction attempt is not the same as was used in the original experiment. We assume it is the same, but the lack of documentation creates some uncertainty
+- The experiment is not implemented correctly
+- The learned parameters used in the reproduction are not the same as was used in the original experiment
+- The random numbers used are not the same. While certainly true, it is unlikely to be the source of the worse performance in the reproduction attempt",No,25
+5,Cooperatively Coevolving Particle Swarms for Large Scale Optimization,R2,"- 7 of 11 functions
+- The function set consists of 7 original functions and 4 additional functions which are rotated versions of 4 of the original functions
+- The rotation matrix was not given, and we therefore decided not to include these functions","- The shifts for the functions are not provided (8)
+- Although pseudocode is provided, there is uncertainty in how to count the number of function evaluations per iteration (11)
+- The method for ensuring that parameters stay within their range is not described (9)","- The minimum number of function evaluations should be used, even if this does not exactly match the pseudocode
+- When a parameter should pass outside its valid range, we instead set it to a random value between its previous value and the maximum (or minimum) value","- CPU: Intel i7-4720HQ
+- RAM: 8 GB
+- OS: Windows 10 Home, version 10.0.16299
+- Language: Java 1.8.0
+- Libraries: Commons Math v. 3.6.1
+",Cooperatively Coevolving PSO,"- Running a two-tailed t-test to determine if the original and reproduced values can have the same mean we reject the null hypothesis of same mean in almost all instances
+- In most instances the original solutions are superior to the reproduction, however this is not always the case. It is therefore difficult to conclude that the reproduction is entirely inferior
+- The reproduction is not entirely consistent, since in some cases the reproduced result differ from the original results in its relationship with the reference algorithm","- Errors in method or experiment implementation
+- Wrong assumptions",No,40
+6,Learning Sparse Representations for Human Action Recognition,R2,"- Only one experiment performed on one of four datasets was attempted reproduced
+- We were only able to cover one experiment due to the time it took to re-implement the method","- The method and topic was entirely new, and it took significant time to understand it
+- One of the parameters for the method, the threshold, was poorly defined (13)
+- According to the paper, the dataset we used contained 90 examples. However, we found 93 examples in the dataset we downloaded. For one of the test subjects, two examples had been generated for three of the classes (15)","- Used the Harris-Laplace keypoint detector
+- Used a threshold parameter value of 10E^10 (Based on empirical testing)
+- Excluded the three extra examples in the downloaded dataset","- CPU: Intel i7-4720HQ
+- RAM: 8 GB
+- OS: Windows 10 Home, version 10.0.16299
+- Language: Matlab 9.3.0.713579 (R2017b)
+- Libraries: Piotr's Computer Vision Matlab Toolbox, Keypoint Extraction, Orthogonal Matching Pursuit",Learning Sparse Representations for Human Ac. Rec.,"- The accuracy achieved in the reproduction is significantly lower than in the original experiment. This seems to indicate some error in the reproduction implementation
+- The reproduction is not consistent with the original result when comparing it to the reference algorithms","- Errors in method or experiment implementation seems like the most likely causes for the reproduction error considering our uncertainty with the topic
+- Third party libraries differ in implementation from the original methods used
+- The threshold parameter does not have the same value",No,40
+7,Visualizing and Understanding Convolutional Networks,R2,"- The reproduction of one experiment (one CNN architecture with one dataset) was attempted
+- The paper uses four datasets, and 12 different architectures. Not all architectures are tested on all datasets","- The magnitude of the dataset (130 GB training set) was a challenge (20)
+- Some parts of the experiment, such as how to evaluate validation data, was poorly documented (10)
+- Some parts of the implementation, such as hwo to process data set and perform data augmentation, was poorly documented (11)","- Made several assumptions about the experiment and training procedure, including how to perform data augmentation, and how to test on validation set. The assumptions were mostly based on descriptions from other CNN papers, primarily the original AlexNet paper","- CPU: Intel i7-5930K
+- RAM: 48 GB
+- GPU: Nvidia GeForce GTX TITAN X
+- OS: Ubuntu Linux 16.04.3 LTS
+- Language: Python 2.7.12
+- Libraries: Theano 1.0.1, Keras 2.1.6, Numpy 1.14.3, OpenCv 3.4.0.12",No results,No results,,,40
+8,iSuc-PseOpt: Identifying lysine succinylation sites in proteinsby incorporating sequence-coupling effects into pseudocomponents and optimizing imbalanced training dataset,R2,"- Only one quantitative experiment was presented in the paper, and was attempted reproduced","- The method for insering hypothetical examples in the training set is not described. Multiple methods are suggested, but it is not stated which is used. (12)
+- The method for converting the input data to feature vectors is not well described in the paper, but is described in a different paper. Furthermore, how to treat wildcard symbols is not specified (11)
+- The augmented dataset used in the training phase is not shared (17)","- Used the SMOTE method for inserting hypothetical examples, based on empirical testing
+- When converting input data to feature vectors an undetermined amino-acid, X, is replaced by the most probable amino-acid","- CPU: Intel i7-4720HQ
+- RAM: 8 GB
+- OS: Windows 10 Home, version 10.0.16299
+- Language: Matlab 9.3.0.713579 (R2017b)
+- Libraries: Matlab Random Forest
+",iSuc-PseOpt,"- For every tested type of cross-validation, the reproduced method outperforms the original method in every metric except specificity
+- The reproduced implementation does not produce the exact same results as the original implementation, but it is not possible to determine if it is strictly better or worse
+- The reproduction is consistent with the original results when comparing it to the reference algorithm","- Errors in method implementation
+- Differences in experiment setup
+- Because of hypotetical example insertion and redundant example removal, the data set used in the reproduction is not exactly the same as the original, and this may be a cause for differences in results",No?,22
+9,A modified Artificial Bee Colony algorithm for real-parameter optimization,R2,"68 in total, 8 of them covered (corresponding to the first two tables for functions 1-8 for various parameters) 
+Rest left out due to time constraints.","* [14] the formula for one of the functions (schwefel) is likely wrong
+* [8,14] the pseudocode does not make sense at times; I had to make an assumption about the site selection
+* [14] the parameters listed in the tables of the experiment I reproduced are misaligned and thus hard to determine
+* [14] Other typographical errors (tables say MR where it meant SF, forward slashes in numerical tables) 
+* [9] it is difficult to tell what paremeters are used for what experiments; they are presented a bit all over the place
+* [10] not clear exactly how Max Function Evaluations is calculated
+* [10,13] some aspects (potentially classifiable as a parameter) are not explicitly listed (max renewals per cycle)
+* [13] parameter unlisted: initial scaling factor for adaptive scaling (ASF)
+* [7] Randomness, even beween own runs with different seeds, causes the results to vary. Knowing all the random values of the original paper might still not be enough, as knowing exactly how they are used without R1 is difficult though. 
+","* [14] modified implementation of schwefel function
+* [11] The parameters I used are assumptions about which were used for each result
+* [6] pseudocode: The exploitation stage (onlooker bees) samples sites by roulette wheel selection by fitness
+* [6] max function evaluations adds +1 for any call to fitness() regardless of whether it is during improvement or scouting
+* [11] max 1 renewal per cycle (mentioned briefly but not explicitly)
+","The results in mprun1.run are from an invocation of main.py, and were run on
+a machine with the following specifications:
+
+OS: Ubuntu Linux 16.04.4 LTS
+Kernel: Linux 4.13.0-37-generic SMP x86_64
+CPU: Intel(R) Xeon(R) CPU X5650  @ 2.67GHz
+
+
+The results in mprun2.run are from an invocation of main.py, and were run on
+a machine with the following specifications:
+
+OS: Ubuntu Linux 16.04.3 LTS
+Kernel: Linux 4.4.0-109-generic SMP x86_64
+CPU: Intel(R) Core(TM) i7-5930K CPU @ 3.50GHz
+
+
+Packages:
+* python-3.5.2
+* numpy-1.14.0
+* scipy-1.0.0
+",https://github.com/Capeo/AIReproducibility/blob/master/AModifiedABCAlgorithmOpt/RESULTS/miscellaneous_results/mprun1.table,"* Essentially a complete failure to reproduce the results except for the simplest functions (sphere)
+* The others are different enough to fail the Welch t-test even for p=0.95
+* most results also fail the difference < 10^(-7) limit that the paper sets as insignificant
+","* [2] Error in assumption about the onlookers
+* [4] Wrong counting of e.g Max function evaluations -- though I have tried running with e.g higher MFE with no apparent improvement.
+* [10] Simply random variations between runs
+* [5] Method implementation error
+* [6] Experiment implementation error
+
+Too few results are similar enough that the few misaligned parameters alone being interpreted wrong should be the probable cause.",No,40
+10,RASL: Robust alignment by sparse and low-rank decomposition for linearly correlated images,R1,"31 in paper, 24 covered by code","* [] The results in the paper are shown as images (e.g many tiled images of faces), these are supposedly aligned. It is hard to say what the degree of alignment is. 
+* [1] The experiment code does not cover all the experiments (e.g the quantitative statistics table)
+* [1] The correspondence between the code and the experiments is not clear; e.g the code calls the various programs for ""examples"" (in the sense of demo) rather than ""experiment"", and although code files reference figures (e.g ""Figure 7 in the paper""), the output format of the figures from the code does not match that of the paper.",,,"* Qualitative figures of tiled images
+","* I can not tell the degree of similarity between the pictures I get from running compared to the ones in the paper.
+","* [15] I can not tell the degree of similarity between the pictures I get from running compared to the ones in the paper.
+",No?,<10
+11,Classification with Noisy Labels by Importance Reweighting,R2,"- One of six experiments were attempted reproduced
+- Out of the six, one experiment was not attempted because it involved synthetic data, and the other four were not attempted because we did not have time to implement the necessary methods","- Some parts of the experiment, in particular the details of the classification, was poorly described (9)
+- How the method and experiment was implemented was barely covered in the paper (11)
+- Partition of data into training and test set is not shared (18)",- Assumed the implementation of the KLIEP library used in the reprodction is equivalent to the method used in the original experiment,"- CPU: Intel i7-4720HQ
+- RAM: 8 GB
+- OS: Windows 10 Home, version 10.0.16299
+- Language: Matlab 9.3.0.713579 (R2017b)
+- Libraries: KLIEP
+",Classification with Noisy Labels by Importance Re.,"- The results achieved by the reproduction are close to the ones achieved in the original paper, but not exact matches
+- In some cases the reproduction is better than the original results, and in some cases worse
+- The reproduction, like the original results, achieves the criteria set forth in the original paper of being less than 0.1 from the ground truth
+- The reproduction is not entirely consistent with the original results when compared to the reference algorithms. However, it is consistent when using the paper's error limit of 0.1 to compare methods.","- Difference in implementation of the KLIEP method. The experiment reproduced is fairly simple, and little code was actually produced in the reproduction. However, a third party implementation of the KLIEP method was used, and may be different from the implementation used in the original experiment
+- The experiment involves random partitioning of the dataset into training and test sets, and the random addition of noise. The differences in random values used is likely to cause some difference in results, and may explain much of the difference",Yes?,40
+12,Deep Convolutional and LSTM Recurrent Neural Networks for Multimodal Wearable Activity Recognition,R1,"- Two of three experiments was attempted reproduced
+- One of the two experiements could be reproduced without re-training the network, the second required re-training","- A guide for reproducing one of the experiments of the paper was found online. However, the results produced when performing the steps of the guide and runing the associated code are not the same as are reported in the original paper 
+- Some parameters seem to have different values in the code online and the paper. When editing these and re-training the network, we achieve worse results than by following the guide (4)
+- The guide does not cover how to reproduce the experiment on the Skoda data set (1)","- We assumed the code available online was the same as was used in the original experiment, but we did experiment with different parameter values","- CPU: Intel i7-5930K
+- RAM: 48 GB
+- GPU: Nvidia GeForce GTX TITAN X
+- OS: Ubuntu Linux 16.04.3 LTS
+- Language: Python 2.7.12
+- Libraries: Theano 1.0.1, Lasagne 0.2, Numpy 1.14.3, Pandas 0.22.0",Deep Conv. and LSTM ,"- The best reproduction results are achieved by following the available guide, even though some of the parameters seem to have values different from the original paper
+- Re-training the network produced significantly worse results
+- The reproduction results achieved when following the available guide without modifications are consistent with the original results. The reproduced results achieved when re-training the network or modifying the code are not consistent.","- When following the guide the reproduction error might be due to different weights learned or different parameters. However, it might also be caused by differences in random initialization or hardware
+- When retraining the network, the error is most likely caused by the network learning different weights. This might be due to difference in parameters used",No,20
+13,Context Aware Saliency Detection,R2,- Two out of two experiments were covered,"- The method code found were encrypted (7)
+- The center prior seems to strongly influence the saliency
+- It was difficult to find out the selection of test set from one of the datasets (16)
+- The other dataset was only found on the personal university page of the author of the article referenced. In addition only 58 out of 62 ground truths were found. (15)
+- The article did not explain the steps used to create the ROC curves (10)",- One of the datasets had four ground truths for each image. Assumed each curve were calculated and the average were used as the result,"- CPU: Intel 5Y10
+- RAM: 8GB
+- OS: Windows 10 Home, Version: 17134.48
+- Language: Matlab R2017b",Context Aware Saliency Detection,"- The ROC curve for the first dataset were consistently higher for each percentage
+- The ROC curve for the second dataset were consistently lower for each percentage","- The subset of images used were not the same as the article
+- The 2D Gaussian used
+- The normalization used",No,40
+14,Distributed representations of sentences and documents,R2,- Zero experiments were covered,"- Details of the method, how it was trained were missing. (11)
+- The method used in the article was based on previous work by the same author. The code for this were found. The code was difficult to read / understand.",- Assumed the method could be created by modifying the previous code from the author,"- CPU: Intel 5Y10
+- RAM: 8GB
+- OS: Windows 10 Home, Version: 17134.48
+- Language: C",No results,No results were created,,No,36
+15,XGBoost: A scalable tree boosting system,R1,- Two out of four experiments were covered,"- The R library used in the comparison of running time needed < 16GB RAM
+- The number of epochs were not specified (13)",- Assumed they used the second test set in the Learning to Rank experiment,"- CPU: Intel i5-4670
+- RAM: 8 GB
+- OS: Windows 10 Pro, version 1709
+- Language: Python 2.7",XGBoost: A scalable tree boosting system,- The results achieved higher accuracy,- The number of epochs is not known,No?,40
+16,Facial landmark detection by deep multi-task learning,R2,"12 in paper, 0 successfully implemented","* [15, 17] The dataset (MTFL) is claimed to be annoted by bounding boxes in the paper but is not in the linked one
+* [15] The main dataset (MTFL) is a combination of existing named datasets (lfw, net), but the directory also contains the test set (AFLW) -- and the paper also uses several other datasets (AFW, AFLW) as test sets. Pieceing together this took a while.
+* [] I found two dataset with annotations (one for the test set AFLW from a separate author, and one for MTFL from a different paper from the same authors). This MTFL dataset with annotated bounding boxes has a different way of annotating the other features (undocumented order, undocumented (0-indexing?) rather than (1-indexing?) that the linked but no boundingbox-MTFL dataset had
+* [10] I struggle to understand the method, particularly some of the notation (convolution was not explicitly stated as such, the difference between formulas where the weights is a vector and the weight is a matrix is not clear to me, the dimensions of the weight matrices are not clear)
+* The lack of a new paragraph as the paper starts decribing the CNN just after describing the models for the auxiliary tasks was a source of confusion
+* Most of my problems were from trying to implement the objective function (eq3), which are likely due to my own understanding rather than the paper itself
+* [6] A non-inspectable program is provided by the authors
+",* None that come into play due to time running out before a runnable implementation was ready,,None achieved,,"* Own unfamiliarity with the viable frameworks
+* Problems understanding the weight matrices the paper uses for the individual regression/classification tasks
+",No,40
+17,Deep learning-based classification of hyperspectral data,R1,"16 in paper, 6 covered by code
+* Two datasets
+* Method is developed stepwise adding more improvements to the method through 4 steps
+* Each dataset is tested on each method (4+4 experiments)
+* Only the last 3 steps of the method appear to be in the R1 code (the code covers 6 of the 8 experiments)
+* There are various additional smaller experiments covering execution time and performance as parameters (e.g number of layers) varies","* [13, 4] The parameters for e.g epochs are not explicit for all experiments (and the code has several versions with some modifications to these)
+* The code on github (R1) is said to be version-locked and ""guaranteed to reproduce the results in the paper""...
+* [6, 4] ...though the author makes some weird commits that changes the epoch numbers to values not mentioned in the paper
+* ...a user mentioned getting poor scores on the same dataset I get poor scores on, though the user never responded back to the authors inqueries for more information about the issue
+* The paper mentions using a GPU is faster though the code does not appear to use one ""out of the box"" without slight modifications (OS environment variables?) May be due to my own poor understanding of this. 
+* The results for the other dataset (Pavia) are close but only 1/3 is not obviously outside the upper whisker of the accuracy boxplot.
+* [1] The code does not cover all the experiments (in particular not covering the preliminary experiments)
+* The code has two bugs due to library/program versions: (one import, one numpy bug fixed in a recent numpy version)
+
+","* [9] That the fix in numpy does not affect the result
+* [3, 15] That the GPU environment flags have no negative effect (although I tried running one experiment without the flags; the result was not discernably affected other than runtime).
+* [1] That the version of the code I ran is the same as the paper
+* [2, 11] The paper is not completely explicit which parameters were used for each experiment.  (I reverted one of the commits that changed the epoch number from 3300 to 300; the paper mentions 3300 for that particular experiment) -- Although I did try running with the new number to, I can not remember that it improved the results (rather the contrary)
+
+","OS: Ubuntu Linux 16.04.3 LTS
+Kernel: Linux 4.4.0-109-generic SMP x86_64
+CPU: Intel(R) Core(TM) i7-5930K CPU @ 3.50GHz
+GPU: GeForce GTX TITAN X
+Mem/Swap: 43GiB/63GiB
+
+Packages (see also https://github.com/hantek/deeplearn_hsi):
+* python-2.7.12
+* numpy-1.14.0
+* scipy-1.0.0
+* scikit-learn-0.19.1
+* Pillow-5.0.0
+* pylab-???
+* Theano-1.0.1 (1.0.1+40.g757b4d5)
+* libopenblas-dev/xenial 0.2.18-1ubuntu1 amd64 [this might be misinterpreted; aptitude is weird]
+* g++ (Ubuntu 5.4.0-6ubuntu1~16.04.5) 5.4.0 20160609
+* libcudnn.so.5.1.10
+* cuda-8.0 [?]
+
+",https://github.com/Capeo/AIReproducibility/blob/master/DLClassifHypspec/results,* I hesitate to call it a success even for the 3 experiments on the Pavia dataset (perhaps only one of them as that was within the whiskerplot),"* [7] If I had to guess I would say something broke in a library version update somewhere.
+* [1] The code versions on github are different from what the authors ran
+* [11] Or perhaps most likely, as hinted to by the author on github, an issue with the datasets used.",No,8
+18,Semi-supervised and unsupervised extreme learning machines,R2,"38 in paper, 5 covered by my implementation
+* A lot of experiments cover the unsupervised part, which is not implemented due to time constraints.
+* Others cover e.g training time which is less useful without an implementation of the methods runtime being compared to","* [8, 10, 11, 13] The paper offloads parameters and method descriptions to other cited papers a bit much, at times listing three papers at once (""hyperparameter settings can be found in [cit47,cit52,cit57]""), yet these cited papers are not clear on parametes either, or might have more parameters than the needed one, or several values for one of the parameters
+* [18] The partition of the training set into folds is not described in detail
+* [11] The paper often suggests (several) ways something can be done, but rarely if every how it did the thing
+* [10] The construction of the laplacian is in particular very abstractly described. Even the cited papers are rather brief and not very explicit about how the laplacian is calculated
+* The first version of my implementation had even poorer results than the current one due to a misunderstanding about how the paper represented the target labels
+
+","* [13] The partition method for the training set into folds
+* [5] Other papers are used for some clarity for parts of the method (but the other papers do not make it very clear)
+* [7, 11] Often several ways to do things, which in particular is not described.
+* [8] Third party implementations of some helper methods assumed to be equivalent
+* [4, 6] The construction of the laplacian has many assumptions about the ways things are done (DLD vs LP vs L as an example)
+* [11] Parameters","OS: Ubuntu Linux 16.04.3 LTS
+Kernel: Linux 4.4.0-109-generic SMP x86_64
+CPU: Intel(R) Core(TM) i7-5930K CPU @ 3.50GHz
+
+Packages:
+* scipy-1.0.0
+* scikit-learn-0.19.1
+* numpy-1.14.0
+* python-3.5.2
+
+",https://github.com/Capeo/AIReproducibility/tree/master/SemiSupELM/results,20-40% worse than the paper on accuracy of classifications,"* [2] wrong interpretation of some method
+* [3,5] error in the implementation of the method
+* [4,6] error in the way I construct the input/label matrices e.g the one-hot for the labeled set
+* [7] Library implementation difference
+* [9] Parameters",No,40
+19,DeepReID: Deep Filter Pairing Neural Network for Person Re-Identification,R2,"6 in paper, 0 successfully implemented","* [9] The methodology for creating training pairs of positive and negative examples from the datasets is not evident
+* [15, 17] The paper claims the dataset contains original image frames, though only contains cropped versions. 
+* [9] The images in the dataset are in the method supplemented by slightly perturbed versions, though it is not clear whether this uses the cropped images or the (unsupplied) origianl images as the base
+* [15] The dataset is described to contain N images in the paper, but actually contains N+k (the paper in a later section mentions the dataset was supplemented with k new images, but this is after they said they would release the dataset (which was described just prior)). Making sense of this took a while.
+* [8,9,10] The training strategies are poorly documented, in particular data balancing: The proportion of negative samples are increased from a ratio of 1:1 up to a ratio of 5:1 as the training progresses, but the rate at which this ratio scales is not documented, nor is the duration of training (""until convergence"") -- and after convergence the model is trained furthermore. This makes even trial and error in figuring out the rate difficult.
+* [18] The test set is shared though not training/validation or details on how to construct
+",,,None achieved,,Experiment not documented well enough.,No,22
+20,Deep neural networks: A promising tool for fault characteristic mining and intelligent diagnosis of rotating machinery with massive data,R2,"10 in paper, 0 successfully implemented","* [9, 15] The dataset does not make sense as described in the paper. The paper mentions 200 signals with 2400 datapoints each but the dataset is a flat 1xN array with 480000 entries. 
+* I have made the observation 200*2400=480 000 though I have no idea what this signifies
+* [15] The paper has different names for one of the datasets (ball vs roller) that took a while to understand as the same thing.
+* [15] The paper lists the dataset used with different units from the dataset list on the website
+* [9, 15] The fourth dataset D is listed as 1-3hp (A,B,C are 1,2,3 hp) so I would assume this is a concatenation, but this is described nowhere. 
+* [9, 15] The website has multiple categories for one dataset listing in the paper for some fault sizes, but the paper does not go into details how to treat this
+
+",N/A,N/A,None achieved,N/A,Dataset description in paper not documented  well enough,No,8
+21,Clustering by fast search and find of density peaks,R1,"- 6 out of 7
+- The last one was difficult to evaluate","- Evaluating the results that only displayed a visualization of the resulting clusters
+- Some hyperparameters (dc, rhomin, deltamin) had to be found by trial and error when working with some of the data sets (13)",,"- CPU: Intel i5-4670
+- RAM: 8 GB
+- OS: Windows 10 Pro, version 1709
+- Language: Matlab R2017b",Clustering by fast search and find of density peaks,"- The 3 experiments with only visualization were a complete match
+- The 2 experiments with a clustering assignation achieved consistent results with the article
+- The experiment with pairings evaluated with rTrue and rFalse got the same results",,Yes,33
+22,DeCAF: A Deep Convolutional Activation Feature for Generic Visual Recognition,R2,- 1 out of 4,"- It was difficult to get the library to build.
+- It was difficult to get transform the output from the neural net to the correct input for the classificators ","- Assumed the Caffe library could be used instead of the Decaf library
+- Assumed the structure and trained weights found were the same as in the article","- CPU: Intel i5-4670
+- RAM: 8 GB
+- OS: Windows 10 Pro, version 1709
+- Language: Python 2.7",,,"- The pre-processing of the images
+- The transformation of the output from the neural net",No,40
