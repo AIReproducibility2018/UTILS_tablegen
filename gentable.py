@@ -84,7 +84,7 @@ def savefig(heatmap, path, **kwargs):
     return fig
 
 def save_heatmap_vertical(heatmap, path, ylabel, **kwargs):
-    fig = sns.heatmap(heatmap, cmap=sns.cm.rocket_r, **kwargs)
+    fig = sns.heatmap(heatmap, cmap="GnBu", **kwargs)
     fig.xaxis.tick_top()
     fig.set_ylabel(ylabel)
     fig.get_figure().savefig(path, bbox_inches='tight')
@@ -148,7 +148,6 @@ def add_bar_labels(ax, vertical=True, bar_label_fontsize=8, drop_zero=False, x_p
                     va=va)
 
 def save_stacked_bar_chart(frame, path, xlabel, ylabel, **kwargs):
-    frame = frame.T
     fig = frame.plot.bar(stacked=True, **kwargs)
     fig.set_xlabel(xlabel, labelpad=4)
     fig.set_ylabel(ylabel, labelpad=5)
@@ -173,8 +172,8 @@ def save_horizontal_bar_chart(frame, path, xlabel, ylabel, drop_zero=False, **kw
 
 def main(output_directory):
     plt.style.use('seaborn-white')
-    colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']
-    custom_cmap = matplotlib.colors.ListedColormap(sns.color_palette(colors).as_hex())
+    colors = ['#0485d1bf', '#75bbfdbf', '#00ffffbf', '#04d8b2bf']
+    custom_cmap = matplotlib.colors.ListedColormap(colors)
     #custom_cmap = matplotlib.colors.ListedColormap(['tab:blue', 'tab:orange', 'tab:green', 'tab:red'], name='from_list', N=None)
     #{ ass:[full_map, R1_map, R2_map],
     #  prob:[...],
@@ -214,7 +213,7 @@ def main(output_directory):
                 overall_category,
                 divtag)
             path = os.path.join(output_directory, filename) + '.svg'
-            savefig(heatmap , path, square=True, annot=True)
+            savefig(heatmap , path, square=True, annot=True, cmap=custom_cmap)
 
         # generate bar charts
         r1_map = pd.DataFrame(maps[overall_category][1].iloc[:,3:].sum(axis=0)).T
@@ -227,7 +226,14 @@ def main(output_directory):
                 overall_category,
                 divtag)
             path = os.path.join(output_directory, filename) + '.svg'
-            save_stacked_bar_chart(division, path, overall_category.capitalize() + " Category", "Count")
+            division = division.T
+            #division["Index"] = division.index
+            #if divtag == "both":
+            #    division = pd.melt(division, id_vars=["Index"], value_vars=["R1", "R2"])
+            #else:
+            #    division = pd.melt(division, id_vars=["Index"], value_vars=[divtag])
+            #print(division.head())
+            save_stacked_bar_chart(division, path, overall_category.capitalize() + " Category", "Count", cmap=custom_cmap)
 
         # 1D version, R1 and R2 normalized to number of papers
         # [R1, R2]
@@ -253,7 +259,7 @@ def main(output_directory):
     frames['All'] = frames.sum(axis=1)
     filename = "papers_bar.svg"
     output_path = os.path.join(output_directory, filename)
-    save_horizontal_bar_chart(frames, output_path, "Count", "Article", drop_zero=True, width=0.7, figsize=(6,12))
+    save_horizontal_bar_chart(frames, output_path, "Count", "Article", drop_zero=True, width=0.7, figsize=(6,12), cmap=custom_cmap)
 
     #   plot heatmap
     filename = "papers_heatmap.svg"
@@ -282,7 +288,7 @@ def main(output_directory):
     frames['All'] = frames.sum(axis=1)
     filename = "papers_type_bar.svg"
     output_path = os.path.join(output_directory, filename)
-    save_horizontal_bar_chart(frames, output_path, "Count", "Article", width=0.5, figsize=(6, 12))
+    save_horizontal_bar_chart(frames, output_path, "Count", "Article", width=0.5, figsize=(6, 12), cmap=custom_cmap)
 
 
     # generate box plot for outcomes
